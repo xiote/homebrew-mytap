@@ -165,7 +165,7 @@ class OpencvAT4110 < Formula
     system "cmake", "--install", "build_shared"
 
     system "cmake", "-S", ".", "-B", "build_static", *args, *std_cmake_args, "-DBUILD_SHARED_LIBS=OFF"
-"
+
     inreplace "build_static/modules/core/version_string.inc", "#{Superenv.shims_path}/", ""
     system "cmake", "--build", "build_static"
     lib.install buildpath.glob("build_static/{lib,3rdparty/**}/*.a")
