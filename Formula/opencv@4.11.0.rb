@@ -127,6 +127,7 @@ class OpencvAT4110 < Formula
       -DBUILD_opencv_python2=OFF
       -DBUILD_opencv_python3=ON
       -DPYTHON3_EXECUTABLE=#{which(python3)}
+      -DBUILD_CAROTENE=OFF
     ]
 
     args += if OS.mac?
