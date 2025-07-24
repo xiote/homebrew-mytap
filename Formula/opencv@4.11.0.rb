@@ -19,7 +19,7 @@ class OpencvAT4110 < Formula
   def install
     args = std_cmake_args + %W[
       -DCMAKE_OSX_DEPLOYMENT_TARGET=#{MacOS.version}
-      -DBUILD_JAVA=OFF     # 불필요한 랩퍼 비활성화
+      -DBUILD_JAVA=OFF     
       -DBUILD_TESTS=OFF
       -DBUILD_PERF_TESTS=OFF
     ]
