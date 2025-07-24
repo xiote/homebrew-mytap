@@ -159,12 +159,12 @@ class OpencvAT4110 < Formula
       args += %W[-DCPU_BASELINE=#{cpu_baseline} -DCPU_BASELINE_REQUIRE=#{cpu_baseline}]
     end
 
-    system "cmake", "-S", ".", "-B", "build_shared", *args, *std_cmake_args
+    system "cmake", "-S", ".", "-B", "build_shared", *args, *std_cmake_args, "-DBUILD_CAROTENE=OFF"
     inreplace "build_shared/modules/core/version_string.inc", "#{Superenv.shims_path}/", ""
     system "cmake", "--build", "build_shared"
     system "cmake", "--install", "build_shared"
 
-    system "cmake", "-S", ".", "-B", "build_static", *args, *std_cmake_args, "-DBUILD_SHARED_LIBS=OFF", "-DBUILD_CAROTENE=OFF
+    system "cmake", "-S", ".", "-B", "build_static", *args, *std_cmake_args, "-DBUILD_SHARED_LIBS=OFF"
 "
     inreplace "build_static/modules/core/version_string.inc", "#{Superenv.shims_path}/", ""
     system "cmake", "--build", "build_static"
