@@ -127,7 +127,6 @@ class OpencvAT4110 < Formula
       -DBUILD_opencv_python2=OFF
       -DBUILD_opencv_python3=ON
       -DPYTHON3_EXECUTABLE=#{which(python3)}
-      -DBUILD_CAROTENE=OFF
     ]
 
     args += if OS.mac?
@@ -148,6 +147,8 @@ class OpencvAT4110 < Formula
         -DZLIB_LIBRARY=#{Formula["zlib"].opt_lib}/libz.so
       ]
     end
+
+    args += ["-DBUILD_CAROTENE=OFF"]
 
     # Ref: https://github.com/opencv/opencv/wiki/CPU-optimizations-build-options
     ENV.runtime_cpu_detection
