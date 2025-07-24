@@ -2,6 +2,7 @@ class OpencvAT4110 < Formula
   desc "Open source computer vision library"
   homepage "https://opencv.org/"
   license "Apache-2.0"
+  revision 1
 
   stable do
     url "https://github.com/opencv/opencv/archive/refs/tags/4.11.0.tar.gz"
@@ -22,14 +23,7 @@ class OpencvAT4110 < Formula
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
-  bottle do
-    rebuild 1
-    sha256 arm64_sonoma:  "94e02970c7bda9ce47a544cd6b1a716e420c45ab5440ed5419c49659e0722152"
-    sha256 arm64_ventura: "8d7212a2badc196d319fb22a1f81be21d8c3d050cefb085a85bfdc80cca23de8"
-    sha256 sonoma:        "792ad416576124b960df8f38cb49b4b09b2c16e92a4c1694224a904b4b6f1e00"
-    sha256 ventura:       "29b1019de41831c01ede50c8e15eb5a28abfb805f3cbca8ee849d7beda9a9652"
-    sha256 x86_64_linux:  "9814579263537723d893b5785649823d737b111c6cc7408faba58cdec7541895"
-  end
+  no_autobump! because: :requires_manual_review
 
   head do
     url "https://github.com/opencv/opencv.git", branch: "master"
@@ -91,9 +85,6 @@ class OpencvAT4110 < Formula
     # Avoid Accelerate.framework
     ENV["OpenBLAS_HOME"] = Formula["openblas"].opt_prefix
 
-    # Reset PYTHONPATH, workaround for https://github.com/Homebrew/homebrew-science/pull/4885
-    ENV.delete("PYTHONPATH")
-
     # Remove bundled libraries to make sure formula dependencies are used
     libdirs = %w[ffmpeg libjasper libjpeg libjpeg-turbo libpng libtiff libwebp openexr openjpeg protobuf tbb zlib]
     libdirs.each { |l| rm_r(buildpath/"3rdparty"/l) }
@@ -136,11 +127,6 @@ class OpencvAT4110 < Formula
       -DBUILD_opencv_python2=OFF
       -DBUILD_opencv_python3=ON
       -DPYTHON3_EXECUTABLE=#{which(python3)}
-    ]
-
-    args += [
-      "-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON", # https://github.com/protocolbuffers/protobuf/issues/12292
-      "-Dprotobuf_MODULE_COMPATIBLE=ON", # https://github.com/protocolbuffers/protobuf/issues/1931
     ]
 
     args += if OS.mac?
@@ -189,14 +175,22 @@ class OpencvAT4110 < Formula
 
   test do
     (testpath/"test.cpp").write <<~CPP
+      #include <opencv2/core.hpp>
+      #include <opencv2/imgcodecs.hpp>
       #include <opencv2/opencv.hpp>
       #include <iostream>
       int main() {
         std::cout << CV_VERSION << std::endl;
+        cv::Mat img = cv::imread("#{test_fixtures("test.jpg")}", cv::IMREAD_COLOR);
+        if (img.empty()) {
+          std::cerr << "Could not read test.jpg fixture" << std::endl;
+          return 1;
+        }
         return 0;
       }
     CPP
-    system ENV.cxx, "-std=c++17", "test.cpp", "-I#{include}/opencv4", "-o", "test"
+    system ENV.cxx, "-std=c++17", "test.cpp", "-I#{include}/opencv4", "-o", "test",
+                    "-L#{lib}", "-lopencv_core", "-lopencv_imgcodecs"
     assert_equal version.to_s, shell_output("./test").strip
 
     output = shell_output("#{python3} -c 'import cv2; print(cv2.__version__)'")
