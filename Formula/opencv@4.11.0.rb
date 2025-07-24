@@ -1,4 +1,4 @@
-class Opencv < Formula
+class OpencvAT4110 < Formula
   desc "Open source computer vision library"
   homepage "https://opencv.org/"
   license "Apache-2.0"
