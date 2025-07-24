@@ -98,6 +98,7 @@ class OpencvAT4110 < Formula
       -DBUILD_OPENJPEG=OFF
       -DBUILD_PERF_TESTS=OFF
       -DBUILD_PNG=OFF
+      -DBUILD_CAROTENE=OFF
       -DBUILD_PROTOBUF=OFF
       -DBUILD_TBB=OFF
       -DBUILD_TESTS=OFF
@@ -147,8 +148,6 @@ class OpencvAT4110 < Formula
         -DZLIB_LIBRARY=#{Formula["zlib"].opt_lib}/libz.so
       ]
     end
-
-    args += ["-DBUILD_CAROTENE=OFF"]
 
     # Ref: https://github.com/opencv/opencv/wiki/CPU-optimizations-build-options
     ENV.runtime_cpu_detection
